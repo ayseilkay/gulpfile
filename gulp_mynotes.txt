@@ -1,0 +1,112 @@
+
+Gulp kurmadan önce node ve npm in kurulmuş olması gerekiyor.
+
+gulp kurulumu --->  npm install gulp-cli -g 
+
+version --> gulp -v 
+
+sass compiler için --> gulp-sass
+css minify için    --> gulp-csso
+dosyaları birleştirmek için --> gulp-concat
+css' de tarayıcı versiyonuna göre prefix ekletmek için --> gulp-autoprefixer
+javascript dosyalarını minify etmek için --> gulp-uglify
+dosyaları silmek için -->  del
+html' i sıkıştırmak için --> gulp-htmlmin
+belli bir sırayla taskları başlatmak için --> run-sequence 
+anlık olarak değişiklikleri görmek için --> browser-sync
+
+
+
+package json yaratmak için ; npm init komutu kullanılır.
+
+Gerekli paketleri yüklemek için ---> npm install gulp -D kullanılır.
+
+Ben şu şekilde ilerledim.
+npm init komutunu çalıştırdım.
+Ardından;Aşağıdaki yapıyı kopyalayıp package.json içerisine attım.
+
+
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.26.3",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.1",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.1",
+    "run-sequence": "^2.2.1"
+  }
+}
+
+
+Sonrasında npm install komutunu çalıştırdım ve paketleri indirdim. Kurulum tamamlanınca node_modules adında 
+klasör dizinime eklendi.
+Çalıştığım klasörde dist ve src adında 2 klasör oluşturdum. dist projenin son hali, src ise çalışılan versiyondur.
+Yani production da dist yer alacaktır.
+
+Artık gulp 'ı ve diğer paketleri kullanabiliriz.Kullandığımız paketleri dahil ettik.Yeni bir dosya oluşturalım ve adı
+gulpfile.js seklinde olsun.Aşağıdaki import işlemlerini gulpfile.js ' e atayalım.
+
+const gulp = require('gulp');
+const browserSync = require('browser-sync').create();
+const sass = require('gulp-sass');
+const minifyCSS = require('gulp-csso');
+const minifyImg = require('gulp-imagemin');
+const minifyJS = require('gulp-uglify');
+const minifyHTML = require('gulp-htmlmin');
+const concat = require('gulp-concat');
+const autoprefixer = require('gulp-autoprefixer');
+const del = require('del');
+const runSequence = require('run-sequence');
+
+Ardından küçük bir task yazıyoruz.
+
+gulp.task('test',()=>{
+    console.log("Task çalıştı.")
+})
+
+Terminalde gulp test yazarak o taskı çalıştırabiliriz.Çalıştırdıgıgımda primordials modülü tanımlanamadı dedi.
+npm install primordials -y diyerek bu modülü indirdim.
+Hata almaya devam edince --> npm install gulp@4.0.2 --save  komutunu çalıştırdım.
+
+Sorun çözüldü....  --> Task çalıştı yazısını çıktı olarak görebildim.
+
+---> css  taskı;
+
+Bunun için gidip src dizini altına sass adından bir klasör daha ekliyorum.sass ın altınada main.scss dosyasını ekliyorum.
+
+gulp.task('css',()=>{
+    return gulp.src('src/sass/**/*.scss')// bütün klasörün içindeki scss dosyalarını çalıştır.
+    .pipe(sass())
+    .pipe(minifyCSS())
+    .pipe(autoPrefixer())
+    .pipe(concat('app.min.css')) //dosyaları  birleştirip app.min.css adını ver.
+    .pipe(gulp.dest('dist/css'))// git bunu dist ' in içindeki css dosyasının içine at.
+    
+})
+
+gulp css ile çalıştırıyorum.
+dist/css/app.min.css adındaki dosyam sıkıştırılmış bir şekilde gelmiş oldu.
+
+sass altına test.scss dosyası ekliyorum ve tekrardan gulp css komutunu çalıştırıp dist/css/app.min.css adındaki dosyama test.scss e eklediğim ifadeyi
+atmıs mı diye bakıyorum.
+
+
+*http://www.erbilen.net/gulp-ile-islerinizi-kolaylastirin/
+*https://www.youtube.com/watch?v=qoikKRpqjIY
+
